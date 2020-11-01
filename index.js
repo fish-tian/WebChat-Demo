@@ -26,6 +26,13 @@ io.on('connection', (socket) => {
         io.emit('chat message broadcast', message);
     });
 
+    // 该用户修改昵称
+    socket.on('change nickname', (message) => {
+        nickname = message;
+        console.log("用户改名为：" + nickname);
+        //io.emit('chat message broadcast', message);
+    });
+
     // 该用户断开连接，广播消息
     socket.on('disconnect', () => {
         var message = nickname + '断开连接'
