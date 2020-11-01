@@ -1,0 +1,8 @@
+{
+    "name": "webchat-demo",
+    "version": "0.0.1",
+    "description": "a web chat demo",
+    "dependencies": {
+        "express": "^4.17.1"
+    }
+}
