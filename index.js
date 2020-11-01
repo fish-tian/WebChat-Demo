@@ -8,6 +8,8 @@ app.get('/', (req, res) => {
 
 io.on('connection', (socket) => {
     console.log('a user connected');
+    // 广播一位用户加入聊天室
+    io.emit('someone connected');
     
     // socket 接收到 chat message
     socket.on('chat message', (message) => {
@@ -18,6 +20,7 @@ io.on('connection', (socket) => {
     // socket 接收到断开连接
     socket.on('disconnect', () => {
         console.log('a user disconnected');
+        io.emit('someone disconnected');
     });
 });
 
