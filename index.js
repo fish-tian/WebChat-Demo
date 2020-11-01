@@ -1,6 +1,7 @@
 var app = require('express')();
 var http = require('http').createServer(app);
 var io = require('socket.io')(http);
+var anonymousNum = 1;
 
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
@@ -8,19 +9,28 @@ app.get('/', (req, res) => {
 
 io.on('connection', (socket) => {
     console.log('a user connected');
-    // 广播一位用户加入聊天室
+    var nickname = '一位不愿透露姓名的用户' + anonymousNum;
+    anonymousNum++;
+
+    // 该用户加入聊天室
+    // 广播消息
     io.emit('someone connected');
+    // 向该用户发送其匿名号
+    socket.emit('user anonymousNum', anonymousNum);
     
-    // socket 接收到 chat message
+    // 该用户发了一条消息，广播消息
     socket.on('chat message', (message) => {
-        console.log("message: " + message);
+        console.log(message);
+        message = nickname + ': '+ message;
+        console.log(message);
         io.emit('chat message broadcast', message);
     });
 
-    // socket 接收到断开连接
+    // 该用户断开连接，广播消息
     socket.on('disconnect', () => {
-        console.log('a user disconnected');
-        io.emit('someone disconnected');
+        var message = nickname + '断开连接'
+        console.log(message);
+        io.emit('someone disconnected', message);
     });
 });
 

@@ -6,6 +6,7 @@
     <script>
       $(function() {
         var socket = io();
+        var nickname = '一位不愿透露姓名的用户';
         
         // 发送消息，提交表单
         $('#send_message_form').submit(function(event) {
@@ -20,20 +21,26 @@
           return false;
         });
         
-        // 有人发了一条消息
+        // 生成特定昵称
+        socket.on('user anonymousNum', (message) => {
+          nickname += message;
+          console.log(nickname);
+        });
+        
+        // 其他人发了一条消息
         socket.on('chat message broadcast', (message) => {
           console.log("client message: " + message);
           $('#messages').append($('<li>').text(message));
         });
 
-        // 有人进入聊天室
+        // 其他人进入聊天室
         socket.on('someone connected', () => {
           $('#messages').append($('<li>').text('有人进入聊天室'));
         });
 
-        // 有人离开聊天室
+        // 其他人离开聊天室
         socket.on('someone disconnected', (message) => {
-          $('#messages').append($('<li>').text('有人离开聊天室'));
+          $('#messages').append($('<li>').text(message));
         });
       });
     </script>
