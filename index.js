@@ -1,7 +1,8 @@
 var app = require('express')();
 var http = require('http').createServer(app);
 var io = require('socket.io')(http);
-var anonymousNum = 1;
+var anonymousNum = 0;
+var users = [];
 
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
@@ -9,14 +10,15 @@ app.get('/', (req, res) => {
 
 io.on('connection', (socket) => {
     console.log('a user connected');
-    var nickname = '一位不愿透露姓名的用户' + anonymousNum;
+    var userid = anonymousNum;
     anonymousNum++;
+    users[userid] = '一位不愿透露姓名的用户' + userid;
 
     // 该用户加入聊天室
-    // 广播消息
-    io.emit('someone connected');
     // 向该用户发送其统一昵称
-    socket.emit('user anonymousname', nickname);
+    socket.emit('user anonymousname', users[userid]);
+    // 广播消息
+    io.emit('someone connected', users);
     
     // 该用户发了一条消息，广播消息
     socket.on('chat message', (message) => {
@@ -27,14 +29,16 @@ io.on('connection', (socket) => {
     });
     // 该用户修改昵称
     socket.on('change nickname', (message) => {
-        nickname = message;
-        console.log("用户改名为：" + nickname);
+        users[userid] = message;
+        console.log("用户改名为：" + users[userid]);
+        io.emit('someone name changed', users);
         //io.emit('chat message broadcast', message);
     });
     // 该用户断开连接，广播消息
     socket.on('disconnect', () => {
-        var message = nickname + '断开连接'
+        var message = users[userid] + '断开连接'
         console.log(message);
+        delete users[userid];
         io.emit('someone disconnected', message);
     });
 });

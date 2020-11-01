@@ -42,8 +42,13 @@
           $('#messages').append($('<li>').text(message));
         });
         // 其他人进入聊天室
-        socket.on('someone connected', () => {
+        socket.on('someone connected', (users) => {
           $('#messages').append($('<li>').text('有人进入聊天室'));
+          $('#users').text('当前在线的人：' + users);
+        });
+        // 其他人改名字了
+        socket.on('someone name changed', (users) => {
+          $('#users').text('当前在线的人：' + users);
         });
         // 其他人离开聊天室
         socket.on('someone disconnected', (message) => {
@@ -76,6 +81,8 @@
     <!-- 用于占位的 div -->
     <div style="height: 100px;"></div>
     <div class = "footer"> 
+      <div id = "users"></div>
+
       <form action="" id="change_nickname_form">
         <input id="nickname" autocomplete="off" />
         <button>保存昵称</button>   <!-- button默认type=submit -->
