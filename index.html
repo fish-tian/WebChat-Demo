@@ -2,8 +2,30 @@
 <html>
   <head>
     <script src="/socket.io/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script>
-      var socket = io();
+      $(function() {
+        var socket = io();
+        
+        // 发送消息，提交表单
+        $('#send_message_form').submit(function(event) {
+          // 防止因表单提交引起的页面刷新
+          event.preventDefault(); 
+          
+          // 触发chat message事件
+          socket.emit('chat message', $('#m').val());
+          $('#m').val('');
+
+          // 也是防止因表单提交引起的页面刷新
+          return false;
+        });
+        
+        // 客户端接收到服务器的消息广播
+        socket.on('chat message broadcast', (message) => {
+          console.log("client message: " + message);
+          $('#messages').append($('<li>').text(message));
+        });
+      });
     </script>
     
     <title>web chat</title>
@@ -20,8 +42,9 @@
   </head>
   <body>
     <ul id="messages"></ul>
-    <form action="">
-      <input id="m" autocomplete="off" /><button>Send</button>
+    <form action="" id="send_message_form">
+      <input id="m" autocomplete="off" />
+      <button>Send</button>   <!-- button默认type=submit -->
     </form>
   </body>
 </html>
