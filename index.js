@@ -15,8 +15,8 @@ io.on('connection', (socket) => {
     // 该用户加入聊天室
     // 广播消息
     io.emit('someone connected');
-    // 向该用户发送其匿名号
-    socket.emit('user anonymousNum', anonymousNum);
+    // 向该用户发送其统一昵称
+    socket.emit('user anonymousname', nickname);
     
     // 该用户发了一条消息，广播消息
     socket.on('chat message', (message) => {
@@ -25,14 +25,12 @@ io.on('connection', (socket) => {
         console.log(message);
         io.emit('chat message broadcast', message);
     });
-
     // 该用户修改昵称
     socket.on('change nickname', (message) => {
         nickname = message;
         console.log("用户改名为：" + nickname);
         //io.emit('chat message broadcast', message);
     });
-
     // 该用户断开连接，广播消息
     socket.on('disconnect', () => {
         var message = nickname + '断开连接'

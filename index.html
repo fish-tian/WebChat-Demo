@@ -6,7 +6,6 @@
     <script>
       $(function() {
         var socket = io();
-        var nickname = '一位不愿透露姓名的用户';
         
         // 提交表单
         // 发送消息
@@ -21,7 +20,6 @@
           // 也是防止因表单提交引起的页面刷新
           return false;
         });
-
         // 修改昵称
         $('#change_nickname_form').submit(function(event) {
           // 防止因表单提交引起的页面刷新
@@ -33,24 +31,20 @@
           // 也是防止因表单提交引起的页面刷新
           return false;
         });
-        
-        // 生成特定昵称
-        socket.on('user anonymousNum', (message) => {
-          nickname += message;
-          console.log(nickname);
+        // 生成统一的昵称
+        socket.on('user anonymousname', (message) => {
+          $('#nickname').val(message);
+          console.log(message);
         });
-        
         // 其他人发了一条消息
         socket.on('chat message broadcast', (message) => {
           console.log("client message: " + message);
           $('#messages').append($('<li>').text(message));
         });
-
         // 其他人进入聊天室
         socket.on('someone connected', () => {
           $('#messages').append($('<li>').text('有人进入聊天室'));
         });
-
         // 其他人离开聊天室
         socket.on('someone disconnected', (message) => {
           $('#messages').append($('<li>').text(message));
