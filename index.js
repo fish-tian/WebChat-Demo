@@ -23,7 +23,7 @@ io.on('connection', (socket) => {
     // 该用户发了一条消息，广播消息
     socket.on('chat message', (message) => {
         console.log(message);
-        message = nickname + ': '+ message;
+        message = users[userid] + ': '+ message;
         console.log(message);
         io.emit('chat message broadcast', message);
     });
